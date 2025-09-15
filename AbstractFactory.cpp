@@ -98,7 +98,7 @@ class Person {
 void ClientCode(AbstractFactory& factory) {
     std::cout << "------Testing code------" << '\n';
     auto person = std::make_unique<Person>("Mike");
-    person->SitOn(*factory.produceChair());
+    person->SitOn(*factory.produceSofa());
     person->SitOn(*factory.produceChair());
     person->SitAt(*factory.produceTable());
 }
