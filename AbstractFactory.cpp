@@ -101,6 +101,7 @@ void ClientCode(AbstractFactory& factory) {
     person->SitOn(*factory.produceSofa());
     person->SitOn(*factory.produceChair());
     person->SitAt(*factory.produceTable());
+    std::cout << std::endl;
 }
 
 int main() {
