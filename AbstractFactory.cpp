@@ -1,20 +1,26 @@
 #include <iostream>
 #include <memory>
 
+// abstract furniture class
 class Furniture {
     public:
     virtual std::string getName() const = 0;
 };
 
+// sittable interface
 class Sittable {};
+// sittable at interface
 class SittableAt {};
 
+// sittable furniture interface 
 class SittableFurniture : public Sittable, public Furniture {};
+// sittable at furniture interface
 class SittableAtFurniture : public SittableAt, public Furniture {};
 
+// abstract furniture classes
 class AbstractSofa : public SittableFurniture {};
-class AbstractTable : public SittableAtFurniture {};
 class AbstractChair : public SittableFurniture {};
+class AbstractTable : public SittableAtFurniture {};
 
 class ModernSofa : public AbstractSofa {
     public:
@@ -46,6 +52,7 @@ class VictorianChair : public AbstractChair {
     std::string getName() const override { return "victorian chair"; }
 };
 
+// abstract factory class
 class AbstractFactory {
     public:
     virtual std::unique_ptr<AbstractSofa> produceSofa() = 0;
@@ -79,7 +86,7 @@ class VictorianFactory : public AbstractFactory {
     }
 };
 
-
+// person class that interacts with furniture
 class Person {
     std::string name;
 
@@ -90,8 +97,8 @@ class Person {
         std::cout << name << " sat down on the " << seat.getName() << '\n';
     }
 
-    void SitAt(SittableAtFurniture& table) {
-        std::cout << name << " sat at the " << table.getName() << '\n';
+    void SitAt(SittableAtFurniture& surface) {
+        std::cout << name << " sat at the " << surface.getName() << '\n';
     }
 };
 
