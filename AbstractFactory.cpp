@@ -55,33 +55,33 @@ class VictorianChair : public AbstractChair {
 // abstract factory class
 class AbstractFactory {
     public:
-    virtual std::unique_ptr<AbstractSofa> produceSofa() = 0;
-    virtual std::unique_ptr<AbstractTable> produceTable() = 0;
-    virtual std::unique_ptr<AbstractChair> produceChair() = 0;
+    virtual std::unique_ptr<AbstractSofa> produceSofa() const = 0;
+    virtual std::unique_ptr<AbstractTable> produceTable() const = 0;
+    virtual std::unique_ptr<AbstractChair> produceChair() const = 0;
 };
 
 class ModernFactory : public AbstractFactory {
     public:
-    std::unique_ptr<AbstractSofa> produceSofa() override {
+    std::unique_ptr<AbstractSofa> produceSofa() const override {
         return std::make_unique<ModernSofa>();
     }
-    std::unique_ptr<AbstractTable> produceTable() override {
+    std::unique_ptr<AbstractTable> produceTable() const override {
         return std::make_unique<ModernTable>();
     }
-    std::unique_ptr<AbstractChair> produceChair() override {
+    std::unique_ptr<AbstractChair> produceChair() const override {
         return std::make_unique<ModernChair>();
     }
 };
 
 class VictorianFactory : public AbstractFactory {
     public:
-    std::unique_ptr<AbstractSofa> produceSofa() override {
+    std::unique_ptr<AbstractSofa> produceSofa() const override {
         return std::make_unique<VictorianSofa>();
     }
-    std::unique_ptr<AbstractTable> produceTable() override {
+    std::unique_ptr<AbstractTable> produceTable() const override {
         return std::make_unique<VictorianTable>();
     }
-    std::unique_ptr<AbstractChair> produceChair() override {
+    std::unique_ptr<AbstractChair> produceChair() const override {
         return std::make_unique<VictorianChair>();
     }
 };
@@ -102,7 +102,7 @@ class Person {
     }
 };
 
-void ClientCode(AbstractFactory& factory) {
+void ClientCode(const AbstractFactory& factory) {
     std::cout << "------Testing code------" << '\n';
     auto person = std::make_unique<Person>("Mike");
     person->SitOn(*factory.produceSofa());
