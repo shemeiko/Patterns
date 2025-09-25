@@ -75,6 +75,7 @@ void ClientCode(const AbstractPaymentProviderFactory& factory) {
     auto payment = factory.CreatePayment();
     auto transaction = factory.CreateTransaction();
     std::cout << payment->GetInvoice() << '\n';
+    std::cout << "Payment2: " << factory.CreatePayment()->GetInvoice() << '\n';
     std::cout << transaction->Status() << "\n\n";
 }
 
