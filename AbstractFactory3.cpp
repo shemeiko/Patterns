@@ -1,66 +1,88 @@
 #include <iostream>
 #include <memory>
 #include <string>
-#include <utility>
 
-class AbstractPaymentSystem {
+class AbstractPayment {
 public:
-    virtual std::string Invoice() const = 0;
-    virtual ~AbstractPaymentSystem() = default;
+    virtual std::string GetInvoice() const = 0; 
+    virtual ~AbstractPayment() = default;
 };
 
-class CardPaymentSystem : public AbstractPaymentSystem {};
-class ElectronicPaymentSystem : public AbstractPaymentSystem {};
-
-class VisaProvider : public CardPaymentSystem {
+class AbstractTransaction {
 public:
-    std::string Invoice() const override { return "The payment had been created by Visa"; };
+    virtual std::string Status() const = 0;
+    virtual ~AbstractTransaction() = default;
 };
 
-class MastercardProvider : public CardPaymentSystem {
+class VisaPayment : public AbstractPayment {
 public:
-    std::string Invoice() const override { return "The payment had been created by Mastercard"; };
+    std::string GetInvoice() const override {
+        return "[Visa]: Payment has been created by Visa";
+    }
 };
 
-class PayPalProvider : public ElectronicPaymentSystem {
+class MastercardPayment : public AbstractPayment {
 public:
-    std::string Invoice() const override { return "The payment had been created by PayPal"; };
+    std::string GetInvoice() const override {
+        return "[Mastercard]: Payment has been created by Mastercard";
+    }
 };
 
-enum class CardPaymentSystems : uint8_t { Visa = 1, Mastercard, };
-enum class ElectronicPaymentSystems : uint8_t { PayPal = 1, };
-
-class AbstractPaymentSystemFactory {
+class VisaTransaction : public AbstractTransaction {
 public:
-    virtual std::unique_ptr<AbstractPaymentSystem> useProvider(int provider) const = 0;
+    std::string Status() const override {
+        return "[Visa]: Transactions had been logged!";
+    }
 };
 
-class CardPaymentSystemFactory : public AbstractPaymentSystemFactory {
+class MastercardTransaction : public AbstractTransaction {
 public:
-    std::unique_ptr<AbstractPaymentSystem> useProvider(int provider) const override {
-        switch((CardPaymentSystems)provider) {
-            case CardPaymentSystems::Visa: return std::make_unique<VisaProvider>();
-            case CardPaymentSystems::Mastercard: return std::make_unique<MastercardProvider>();
-            default: return nullptr;
-        }
-    };
+    std::string Status() const override {
+        return "[Mastercard]: Transactions had been logged!";
+    }
 };
 
-class ElectronicPaymentSystemFactory : public AbstractPaymentSystemFactory {
+class AbstractPaymentProviderFactory {
 public:
-    std::unique_ptr<AbstractPaymentSystem> useProvider(int provider) const override {
-        switch((ElectronicPaymentSystems)provider) {
-            case ElectronicPaymentSystems::PayPal: return std::make_unique<PayPalProvider>();
-            default: return nullptr;
-        }
-    };
+    virtual std::unique_ptr<AbstractPayment> CreatePayment() const = 0;
+    virtual std::unique_ptr<AbstractTransaction> CreateTransaction() const = 0;
+    virtual ~AbstractPaymentProviderFactory() = default;
 };
+
+class VisaPaymentProviderFactory : public AbstractPaymentProviderFactory {
+public:
+    std::unique_ptr<AbstractPayment> CreatePayment() const override {
+        return std::make_unique<VisaPayment>();
+    }
+    std::unique_ptr<AbstractTransaction> CreateTransaction() const override {
+        return std::make_unique<VisaTransaction>();
+    }
+};
+
+class MastercardPaymentProviderFactory : public AbstractPaymentProviderFactory {
+public:
+    std::unique_ptr<AbstractPayment> CreatePayment() const override {
+        return std::make_unique<MastercardPayment>();
+    }
+    std::unique_ptr<AbstractTransaction> CreateTransaction() const override {
+        return std::make_unique<MastercardTransaction>();
+    }
+};
+
+void ClientCode(const AbstractPaymentProviderFactory& factory) {
+    using std::cout;
+    std::cout << "------Testing code------" << '\n';
+    auto payment = factory.CreatePayment();
+    auto transaction = factory.CreateTransaction();
+    std::cout << payment->GetInvoice() << '\n';
+    std::cout << transaction->Status() << "\n\n";
+}
 
 int main() {
-    using std::cout;
-    auto cardFactory = std::make_unique<CardPaymentSystemFactory>();
-    cout << cardFactory->useProvider((int)CardPaymentSystems::Visa)->Invoice() << '\n';
-    cout << cardFactory->useProvider((int)CardPaymentSystems::Mastercard)->Invoice() << '\n';
+    std::unique_ptr<AbstractPaymentProviderFactory> factory = std::make_unique<VisaPaymentProviderFactory>();
+    ClientCode(*factory);
+    factory = std::make_unique<MastercardPaymentProviderFactory>();
+    ClientCode(*factory);
 
     return 0;
 }
