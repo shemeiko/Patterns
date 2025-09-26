@@ -8,8 +8,8 @@ private:
 public:
     Logger(const Logger&) = delete;
     void operator=(const Logger&) = delete;
-    Logger(const Logger&&) = delete;
-    void operator=(const Logger&&) = delete;
+    Logger(Logger&&) = delete;
+    void operator=(Logger&&) = delete;
 
     static Logger& getLogger() {
         static Logger instance;
@@ -22,7 +22,7 @@ public:
 };
 
 int main() {
-    auto& logger = Logger::getLogger();
+    auto& logger = Logger::getLogger(); 
     std::cout << &logger << " " << &Logger::getLogger() << '\n';
     logger.log("Program successfully completed");
 }
