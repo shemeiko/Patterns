@@ -80,7 +80,6 @@ public:
 };
 
 void ClientCode(const AbstractPaymentProviderFactory& factory) {
-    using std::cout;
     std::cout << "------Testing code------" << '\n';
     auto transaction = factory.CreateTransaction();
     for (int i = 0; i < 5; ++i) std::cout << factory.CreatePayment()->GetInvoice() << '\n';
