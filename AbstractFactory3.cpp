@@ -1,5 +1,6 @@
 #include <iostream>
 #include <memory>
+#include <format>
 #include <string>
 
 class AbstractPayment {
@@ -15,18 +16,27 @@ public:
 };
 
 class VisaPayment : public AbstractPayment {
+    static int count;
 public:
+    VisaPayment() { count++; }
     std::string GetInvoice() const override {
-        return "[Visa]: Payment has been created by Visa";
+        return std::format("[Visa]: Payment #{} has been created by Visa", count);
     }
 };
 
+int VisaPayment::count = 0;
+
 class MastercardPayment : public AbstractPayment {
+    static int count;
+
 public:
+    MastercardPayment() { count++; }
     std::string GetInvoice() const override {
-        return "[Mastercard]: Payment has been created by Mastercard";
+        return std::format("[Mastercard]: Payment #{} has been created by Mastercard", count);
     }
 };
+
+int MastercardPayment::count = 0;
 
 class VisaTransaction : public AbstractTransaction {
 public:
@@ -72,10 +82,8 @@ public:
 void ClientCode(const AbstractPaymentProviderFactory& factory) {
     using std::cout;
     std::cout << "------Testing code------" << '\n';
-    auto payment = factory.CreatePayment();
     auto transaction = factory.CreateTransaction();
-    std::cout << payment->GetInvoice() << '\n';
-    std::cout << "Payment2: " << factory.CreatePayment()->GetInvoice() << '\n';
+    for (int i = 0; i < 5; ++i) std::cout << factory.CreatePayment()->GetInvoice() << '\n';
     std::cout << transaction->Status() << "\n\n";
 }
 
